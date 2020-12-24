@@ -3,7 +3,7 @@ import UserItem from './UserItem'
 import './UsersList.css'
 
 export default function UsersList(props) {
-	if (props.length === 0) {
+	if (props.items.length === 0) {
 		return (
 			<div className='center'>
 				<h2>No users found.</h2>
@@ -11,7 +11,7 @@ export default function UsersList(props) {
 		)
 	}
 	return (
-		<ul>
+		<ul className='users-list'>
 			{props.items.map((user) => {
 				return (
 					<UserItem
@@ -19,7 +19,7 @@ export default function UsersList(props) {
 						id={user.id}
 						image={user.image}
 						name={user.name}
-						placeCOunt={user.places}
+						placeCount={user.places}
 					/>
 				)
 			})}
