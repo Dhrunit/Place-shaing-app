@@ -1,45 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-
+import ErrorModal from '../../shared/components/UIElements/ErrorModal'
+import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner'
 import PlaceList from '../components/PlaceList'
-
-const DUMMY_PLACES = [
-	{
-		id: 'p1',
-		title: 'Empire State building',
-		description: 'Famous skyscraper',
-		imageUrl:
-			'https://newyorkyimby.com/wp-content/uploads/2020/09/DSCN0762-777x1036.jpg',
-		address: '20 W 34th St, New York, NY 10001, United States',
-		location: {
-			lat: 40.7484405,
-			lng: -73.9878584,
-		},
-		creator: 'u1',
-	},
-	{
-		id: 'p2',
-		title: 'Empire State building',
-		description: 'Famous skyscraper',
-		imageUrl:
-			'https://newyorkyimby.com/wp-content/uploads/2020/09/DSCN0762-777x1036.jpg',
-		address: '20 W 34th St, New York, NY 10001, United States',
-		location: {
-			lat: 40.7484405,
-			lng: -73.9878584,
-		},
-		creator: 'u2',
-	},
-]
-
+import { useHttpCLient } from '../../shared/hooks/http-hook'
 export default function UserPlaces() {
+	const [loadedPlaces, setIsLoadedPlaces] = useState()
+	const { isLoading, error, sendRequest, clearError } = useHttpCLient()
 	const userId = useParams().userId
-	const loadedPlaces = DUMMY_PLACES.filter(
-		(place) => place.creator === userId
-	)
+
+	useEffect(() => {
+		const fetchPlaces = async () => {
+			try {
+				const responseData = await sendRequest(
+					`http://localhost:5000/api/places/user/${userId}`
+				)
+				setIsLoadedPlaces(responseData.places)
+			} catch (error) {}
+		}
+		fetchPlaces()
+	}, [sendRequest, userId])
+
 	return (
-		<div>
-			<PlaceList items={loadedPlaces} />
-		</div>
+		<>
+			<ErrorModal error={error} onClear={clearError} />
+			{isLoading && (
+				<div className='center'>
+					<LoadingSpinner asOverlay />
+				</div>
+			)}
+			{!isLoading && loadedPlaces && <PlaceList items={loadedPlaces} />}
+		</>
 	)
 }
