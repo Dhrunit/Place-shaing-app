@@ -14,7 +14,7 @@ export default function NavLinks(props) {
 			</li>
 			{auth.isLoggedIn && (
 				<li>
-					<NavLink to='/u1/places'>My places</NavLink>
+					<NavLink to={`/${auth.userId}/places`}>My places</NavLink>
 				</li>
 			)}
 			{auth.isLoggedIn && (
